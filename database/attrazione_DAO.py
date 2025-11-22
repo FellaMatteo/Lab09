@@ -6,8 +6,8 @@ class AttrazioneDAO:
     @staticmethod
     def get_attrazioni() -> dict[str, Attrazione] | None:
         """
-        Restituisce tutte le attrazioni
-        :return: un dizionario di tutte le Attrazioni
+        Restituisce tutte le attrazioni.
+        :return: un dizionario con chiave id e valore Attrazione
         """
         cnx = DBConnect.get_connection()
         result = {}
@@ -17,7 +17,12 @@ class AttrazioneDAO:
             return None
 
         cursor = cnx.cursor(dictionary=True)
-        query = """ ADD YOUR QUERY """ # TODO
+
+        query = """
+            SELECT id, nome, valore_culturale
+            FROM attrazione
+        """
+
         try:
             cursor.execute(query)
             for row in cursor:
@@ -27,9 +32,11 @@ class AttrazioneDAO:
                     valore_culturale=row["valore_culturale"]
                 )
                 result[attrazione.id] = attrazione
+
         except Exception as e:
             print(f"Errore durante la query get_attrazioni: {e}")
             result = None
+
         finally:
             cursor.close()
             cnx.close()

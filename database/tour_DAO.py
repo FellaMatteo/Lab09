@@ -7,16 +7,22 @@ class TourDAO:
     def get_tour() -> dict[str, Tour] | None:
         """
         Restituisce tutti i tour
-        :return: un dizionario di tutti i Tour
+        :return: un dizionario id → Tour
         """
         cnx = DBConnect.get_connection()
         result = {}
+
         if cnx is None:
             print("❌ Errore di connessione al database.")
             return None
 
         cursor = cnx.cursor(dictionary=True)
-        query = """ ADD YOUR QUERY """ # TODO
+
+        query = """
+            SELECT id, nome, durata_giorni, costo, id_regione
+            FROM tour
+        """
+
         try:
             cursor.execute(query)
             for row in cursor:
@@ -28,9 +34,11 @@ class TourDAO:
                     id_regione=row["id_regione"]
                 )
                 result[tour.id] = tour
+
         except Exception as e:
             print(f"Errore durante la query get_tour: {e}")
             result = None
+
         finally:
             cursor.close()
             cnx.close()
@@ -40,17 +48,23 @@ class TourDAO:
     @staticmethod
     def get_tour_attrazioni() -> list | None:
         """
-        Restituisce tutte le relazioni
+        Restituisce tutte le relazioni tour–attrazione
         :return: una lista di dizionari [{"id_tour": ..., "id_attrazione": ...}]
         """
         cnx = DBConnect.get_connection()
         result = []
+
         if cnx is None:
             print("❌ Errore di connessione al database.")
             return None
 
         cursor = cnx.cursor(dictionary=True)
-        query = """ ADD YOUR QUERY """ # TODO
+
+        query = """
+            SELECT id_tour, id_attrazione
+            FROM tour_attrazione
+        """
+
         try:
             cursor.execute(query)
             for row in cursor:
@@ -58,9 +72,11 @@ class TourDAO:
                     "id_tour": row["id_tour"],
                     "id_attrazione": row["id_attrazione"]
                 })
+
         except Exception as e:
             print(f"Errore durante la query get_tour_attrazioni: {e}")
             result = None
+
         finally:
             cursor.close()
             cnx.close()
